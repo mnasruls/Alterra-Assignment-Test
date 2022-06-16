@@ -30,7 +30,7 @@ func (repo UserRepository) FindAllUser(limit int, offset int, filters []map[stri
 	for _, sort := range sorts {
 		builder.Order(clause.OrderByColumn{Column: clause.Column{Name: sort["field"].(string)}, Desc: sort["desc"].(bool)})
 	}
-	tx := builder.Where("role=?", "customer").Find(&users)
+	tx := builder.Where("role=?", "user").Find(&users)
 	if tx.Error != nil {
 		return []entities.User{}, web.WebError{Code: 500, Message: tx.Error.Error()}
 	}
