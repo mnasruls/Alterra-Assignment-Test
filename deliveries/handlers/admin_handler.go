@@ -89,9 +89,18 @@ func (handler AdminHandler) Update(c echo.Context) error {
 	c.Bind(&userReq)
 
 	// Get token
+	id, tx := strconv.Atoi(c.Param("id"))
 	token := c.Get("user")
-	tokenID, role, err := middlewares.ReadToken(token)
-	links := map[string]string{"self": configs.Get().App.BaseURL + "/api/admins"}
+	_, role, err := middlewares.ReadToken(token)
+	links := map[string]string{"self": configs.Get().App.BaseURL + "/api/admins" + c.Param("id")}
+	if tx != nil {
+		return c.JSON(http.StatusBadRequest, web.ErrorResponse{
+			Code:   http.StatusBadRequest,
+			Status: "ERROR",
+			Error:  "invalid parameter",
+			Links:  links,
+		})
+	}
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, web.ErrorResponse{
 			Code:   http.StatusUnauthorized,
@@ -122,7 +131,7 @@ func (handler AdminHandler) Update(c echo.Context) error {
 		})
 	}
 	// Update via user service call
-	userRes, err := handler.userService.UpdateUser(userReq, tokenID)
+	userRes, err := handler.userService.UpdateUser(userReq, id)
 	if err != nil {
 		return helpers.WebErrorResponse(c, err, links)
 	}
