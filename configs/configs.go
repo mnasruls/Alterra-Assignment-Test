@@ -41,8 +41,8 @@ func initConfig() *AppConfig {
 		config.Database.Host = "localhost"
 		config.Database.Port = "3306"
 		config.Database.Username = "root"
-		config.Database.Password = "root"
-		config.Database.Name = "tupulung"
+		config.Database.Password = ""
+		config.Database.Name = "alterra test"
 
 		return &config
 	}
