@@ -19,6 +19,12 @@ func NewUserRepository(database *gorm.DB) *UserRepository {
 	}
 }
 
+/*
+ * Find All User
+ * -------------------------------
+ * Mencari Semua User
+ */
+
 func (repo UserRepository) FindAllUser(limit int, offset int, filters []map[string]string, sorts []map[string]interface{}) ([]entities.User, error) {
 	users := []entities.User{}
 	builder := repo.db.Limit(limit).Offset(offset)
