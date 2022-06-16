@@ -23,6 +23,7 @@ var userErrorMessages = map[string]string{
 	"DOB|required":         "Date of birth field must be filled",
 	"Address|required":     "Address must be filled",
 	"PhoneNumber|required": "Phone number must be filled",
+	"Role|required":        "Role must be filled",
 }
 
 /*
