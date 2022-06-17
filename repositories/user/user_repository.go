@@ -137,3 +137,23 @@ func (repo UserRepository) Delete(id int) error {
 	}
 	return nil
 }
+
+/*
+ * Count All User
+ * -------------------------------
+ * Mengitung User berdasarkan filter
+ */
+
+func (repo UserRepository) CountAllUser(filters []map[string]string) (int64, error) {
+	var count int64
+	builder := repo.db.Model(&entities.User{})
+	// Where filters
+	for _, filter := range filters {
+		builder.Where(filter["field"]+" "+filter["operator"]+" ?", filter["value"])
+	}
+	tx := builder.Count(&count)
+	if tx.Error != nil {
+		return -1, web.WebError{Code: 400, Message: tx.Error.Error()}
+	}
+	return count, nil
+}

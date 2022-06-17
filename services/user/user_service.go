@@ -123,6 +123,11 @@ func (service UserService) FindBy(field string, value string) (entities.UserResp
 	return userRes, err
 }
 
+/*
+ * User Service - UpdateUser
+ * -------------------------------
+ * Mengedit profile user berdasarkan id
+ */
 func (service UserService) UpdateUser(userRequest entities.UpdateUserRequest, id int) (entities.UserResponse, error) {
 
 	// Get user by ID via repository
@@ -149,6 +154,11 @@ func (service UserService) UpdateUser(userRequest entities.UpdateUserRequest, id
 	return userRes, err
 }
 
+/*
+ * User Service - Delete User
+ * -------------------------------
+ * Menghapus user berdasarkan id
+ */
 func (service UserService) DeleteUser(id int) error {
 
 	// Cari user berdasarkan ID via repo
@@ -160,4 +170,29 @@ func (service UserService) DeleteUser(id int) error {
 	// Delete via repository
 	err = service.userRepo.Delete(id)
 	return err
+}
+
+/*
+ * Get Pagination
+ * -------------------------------
+ * Mengambil data pagination berdasarkan filters dan sorts
+ */
+func (service UserService) GetPaginationUser(limit, page int, filters []map[string]string) (web.Pagination, error) {
+	totalRows, err := service.userRepo.CountAllUser(filters)
+	if err != nil {
+		return web.Pagination{}, err
+	}
+	if limit <= 0 {
+		limit = 1
+	}
+	totalPages := totalRows / int64(limit)
+	if totalRows%int64(limit) > 0 {
+		totalPages++
+	}
+
+	return web.Pagination{
+		Page:       page,
+		Limit:      limit,
+		TotalPages: int(totalPages),
+	}, nil
 }

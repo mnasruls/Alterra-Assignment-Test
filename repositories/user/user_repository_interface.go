@@ -45,4 +45,11 @@ type UserRepositoryInterface interface {
 	 * Delete user tunggal berdasarkan ID
 	 */
 	Delete(id int) error
+
+	/*
+	* Count All User
+	* --------------------------------
+	* Cuount All User untuk filter
+	 */
+	CountAllUser(filters []map[string]string) (int64, error)
 }
