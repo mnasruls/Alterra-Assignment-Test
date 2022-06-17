@@ -1,0 +1,754 @@
+openapi: '3.0.3'
+
+info:
+    title: User Management
+    version: v1.0.0
+    description: Useer management system API, written in Golang.
+
+servers:
+    - url: "localhost:8000"
+      description: Development
+
+tags:
+    - name: Auth
+      description: Authentication system
+    - name: Admin
+      description: Manage user data
+    - name: User
+      description: Show user data
+
+components:
+    securitySchemes:
+        JWTAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+            description: 'Use token for authorization'
+
+    schemas:
+        auth-request:
+            type: object
+            properties:
+                email:
+                    type: string
+                    example: john@mail.com
+                password:
+                    type: string
+                    example: john123
+        user-request:
+            type: object
+            properties:
+                name:
+                    type: string
+                    example: John
+                email:
+                    type: string
+                    example: john@mail.com
+                password:
+                    type: string
+                    example: john123
+                gender:
+                    type: string
+                    example: male
+                address:
+                    type: string
+                    example: Groove st. Ave, Dallas
+                dob:
+                    type: string
+                    example: 2000/07/28
+                role:
+                    type: string
+                    example: https://source.unsplash.com/1200x400/?sea
+        user-response:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    example: 7
+                name:
+                    type: string
+                    example: John
+                email:
+                    type: string
+                    example: john@mail.com
+                gender:
+                    type: string
+                    example: male
+                address:
+                    type: string
+                    example: Groove st. Ave, Dallas
+                role:
+                    type: string
+                    example: user
+                created_at:
+                    type: string
+                    example: 2012/07/28T10:02:37.000+0700
+                updated_at:
+                    type: string
+                    example: 2012/07/28T10:02:37.000+0700
+        pagination:
+            type: object
+            properties:
+                page:
+                    type: integer
+                    example: 1
+                limit:
+                    type: integer
+                    example: 50
+                total_pages:
+                    type: integer
+                    example: 11
+
+paths:
+    /api/auth:
+        post:
+            tags:
+                - 'Auth'
+            description: Log in the registered user into the system
+            summary: Login to the system
+            requestBody:
+                content:
+                    application/x-www-form-urlencoded:
+                        schema:
+                            $ref: '#/components/schemas/auth-request'
+            responses:
+                '200':
+                    description: success authenticating single user
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'OK'
+                                    code:
+                                        type: string
+                                        example: 200
+                                    error:
+                                        type: string
+                                        example: null
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://domain.com/api/auth'
+                                            me:
+                                                type: string
+                                                example: 'http://domain.com/api/auth/me'
+                                    data:
+                                        type: object
+                                        properties:
+                                            token:
+                                                type: string
+                                                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                                            user:
+                                                $ref: '#/components/schemas/user-response'
+                '400':
+                    description: validation failed
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'ERROR'
+                                    code:
+                                        type: string
+                                        example: 400
+                                    error:
+                                        type: string
+                                        example: 'validation error'
+                                    errors:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                field:
+                                                    type: string
+                                                    example: username
+                                                error:
+                                                    type: string
+                                                    example: required
+
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://domain.com/api/auth'
+                '500':
+                    description: server error
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'ERROR'
+                                    code:
+                                        type: string
+                                        example: 500
+                                    error:
+                                        type: string
+                                        example: 'server error, cannot update database'
+
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://domain.com/api/auth'
+
+    /api/auth/me:
+        get:
+            tags:
+                - 'Auth'
+            security:
+                - JWTAuth: []
+            description: Get currently authenticated userdata
+            summary: Get currently authenticated userdata
+            parameters:
+                - in: header
+                  name: Authorization
+                  required: true
+                  schema:
+                      type: string
+                      example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+            responses:
+                '200':
+                    description: success authenticating single user
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'OK'
+                                    code:
+                                        type: string
+                                        example: 200
+                                    error:
+                                        type: string
+                                        example: null
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://domain.com/api/auth/me'
+                                    data:
+                                        type: object
+                                        properties:
+                                            token:
+                                                type: string
+                                                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                                            user:
+                                                $ref: '#/components/schemas/user-response'
+                '400':
+                    description: token invalid
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'ERROR'
+                                    code:
+                                        type: string
+                                        example: 400
+                                    error:
+                                        type: string
+                                        example: 'invalid token'
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://domain.com/api/auth'
+                '500':
+                    description: server error
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'ERROR'
+                                    code:
+                                        type: string
+                                        example: 500
+                                    error:
+                                        type: string
+                                        example: 'server error, cannot connect database'
+
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://domain.com/api/auth'
+
+    # -----------------------------------------
+    #  User
+    # -----------------------------------------
+    /api/admins:
+        post:
+            tags:
+                - 'Admin'
+            description: Register a user
+            summary: Register a user
+            security:
+                - JWTAuth: []
+            requestBody:
+                content:
+                     application/x-www-form-urlencoded:
+                        schema:
+                            $ref: '#/components/schemas/user-request'
+            responses:
+                '200':
+                    description: success creating single user
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: OK
+                                    code:
+                                        type: integer
+                                        example: 201
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://example.com/api/users/2'
+                                    data:
+                                        $ref: '#/components/schemas/user-response'
+                '400':
+                    description: validation failed
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'ERROR'
+                                    code:
+                                        type: string
+                                        example: 400
+                                    error:
+                                        type: string
+                                        example: 'validation error'
+                                    errors:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                field:
+                                                    type: string
+                                                    example: username
+                                                error:
+                                                    type: string
+                                                    example: required
+
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://domain.com/api/users'
+                '500':
+                    description: server error
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'ERROR'
+                                    code:
+                                        type: string
+                                        example: 500
+                                    error:
+                                        type: string
+                                        example: 'server error, cannot connect to database'
+
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://domain.com/api/users'
+
+    /api/users/{userId}:
+        get:
+            tags:
+                - 'User'
+            description: Get single user data
+            summary: Get single user data
+            security:
+                - JWTAuth: []
+            parameters:
+                - name: id
+                  required: true
+                  in: path
+                  example:
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: success get single user
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: OK
+                                    code:
+                                        type: string
+                                        example: 200
+                                    data:
+                                        $ref: '#/components/schemas/user-response'
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://example.com/api/users/2'
+                '400':
+                    description: cannot get single user
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: ERROR
+                                    code:
+                                        type: string
+                                        example: 200
+                                    error:
+                                        type: string
+                                        example: cannot get user data with specified id
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://domain.com/api/users/2'
+                '500':
+                    description: server error
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'ERROR'
+                                    code:
+                                        type: string
+                                        example: 500
+                                    error:
+                                        type: string
+                                        example: 'server error, cannot connect to database'
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://domain.com/api/users/2'
+        put:
+            tags:
+                - 'Admin'
+            security:
+                - JWTAuth: []
+            description: Update single user
+            summary: Update single user
+            requestBody:
+                content:
+                    application/x-www-form-urlencoded:
+                        schema:
+                            $ref: '#/components/schemas/user-request'
+            responses:
+                '200':
+                    description: success creating single user
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: OK
+                                    code:
+                                        type: integer
+                                        example: 200
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://example.com/api/users/2'
+                                    data:
+                                        $ref: '#/components/schemas/user-response'
+                '400':
+                    description: validation error
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: ERROR
+                                    code:
+                                        type: integer
+                                        example: 422
+                                    error:
+                                        type: string
+                                        example: no such data filled
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://example.com/api/users/2'
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: ERROR
+                                    code:
+                                        type: integer
+                                        example: 401
+                                    error:
+                                        type: string
+                                        example: unauthorized
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://example.com/api/users/2'
+                '500':
+                    description: server error
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: ERROR
+                                    code:
+                                        type: integer
+                                        example: 500
+                                    error:
+                                        type: string
+                                        example: cannot udpate user record
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://example.com/api/users/2'
+        delete:
+            tags:
+                - 'Admin'
+            security:
+                - JWTAuth: []
+            description: Delete single user
+            summary: delete single user
+            parameters:
+                - name: id
+                  required: true
+                  in: path
+                  example: 1
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: success deleting single user
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: OK
+                                    code:
+                                        type: integer
+                                        example: 200
+                                    error:
+                                        type: string
+                                        example: null
+                                    data:
+                                        type: object
+                                        properties:
+                                            id:
+                                                type: string
+                                                example: 1
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://example.com/api/users/2'
+                '400':
+                    description: specified parameter doesn't match with any record
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: ERROR
+                                    code:
+                                        type: integer
+                                        example: 400
+                                    error:
+                                        type: string
+                                        example: The request ID has been deleted or not exist
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://example.com/api/users/2'
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: ERROR
+                                    code:
+                                        type: integer
+                                        example: 422
+                                    error:
+                                        type: string
+                                        example: unauthorized
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://example.com/api/users/2'
+                '500':
+                    description: server error
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: ERROR
+                                    code:
+                                        type: integer
+                                        example: 500
+                                    error:
+                                        type: string
+                                        example: cannot delete user record
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://example.com/api/users/2'
+    /api/users:
+        get:
+            tags:
+                - 'User'
+            security:
+                - JWTAuth: []
+            description: Get All userdata
+            summary: Get All userdata
+            parameters:
+                - in: query
+                  name: name
+                  description: Search user by name
+                  schema:
+                      type: string
+                      example: Ahmad
+                - in: query
+                  name: sort_name
+                  description: Sort name alphabetically 1 as descendeing and 0 as ascending
+                  schema:
+                      type: boolean
+                      example: 1
+            responses:
+                '200':
+                    description: success authenticating single user
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'OK'
+                                    code:
+                                        type: string
+                                        example: 200
+                                    error:
+                                        type: string
+                                        example: null
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://domain.com/api/auth/me'
+                                    data:
+                                        type: array
+                                        items: 
+                                          $ref: '#/components/schemas/user-response'
+                '500':
+                    description: server error
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'ERROR'
+                                    code:
+                                        type: string
+                                        example: 500
+                                    error:
+                                        type: string
+                                        example: 'server error, cannot connect database'
+
+                                    links:
+                                        type: object
+                                        properties:
+                                            self:
+                                                type: string
+                                                example: 'http://domain.com/api/auth'
