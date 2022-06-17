@@ -32,12 +32,40 @@ func NewAdminHandler(service *userService.UserService) *AdminHandler {
  */
 func (handler AdminHandler) Create(c echo.Context) error {
 
+	// Define links (hateoas)
+	links := map[string]string{"self": configs.Get().App.BaseURL + "/api/admins"}
+
+	//Read token
+	token := c.Get("user")
+	_, role, err := middlewares.ReadToken(token)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, web.ErrorResponse{
+			Code:   http.StatusUnauthorized,
+			Status: "ERROR",
+			Error:  "unauthorized",
+			Links:  links,
+		})
+	}
+	if role != "admin" {
+		return c.JSON(http.StatusUnauthorized, web.ErrorResponse{
+			Code:   http.StatusUnauthorized,
+			Status: "ERROR",
+			Error:  "unauthorized",
+			Links:  links,
+		})
+	}
+
 	// Bind request ke user request
 	userReq := entities.CreateUserRequest{}
 	c.Bind(&userReq)
-
-	// Define links (hateoas)
-	links := map[string]string{"self": configs.Get().App.BaseURL + "/api/admins"}
+	if userReq.Role != "user" && userReq.Role != "admin" {
+		return c.JSON(http.StatusUnauthorized, web.ErrorResponse{
+			Code:   http.StatusBadRequest,
+			Status: "ERROR",
+			Error:  "role is invalid",
+			Links:  links,
+		})
+	}
 
 	// registrasi user via call user service
 	userRes, err := handler.userService.CreateUser(userReq)
@@ -109,7 +137,7 @@ func (handler AdminHandler) Update(c echo.Context) error {
 			Links:  links,
 		})
 	}
-	if role == "admin" {
+	if role != "admin" {
 		return c.JSON(http.StatusUnauthorized, web.ErrorResponse{
 			Code:   http.StatusUnauthorized,
 			Status: "ERROR",
