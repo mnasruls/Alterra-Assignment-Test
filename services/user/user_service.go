@@ -2,7 +2,6 @@ package user
 
 import (
 	"alterra/deliveries/helpers"
-	"alterra/deliveries/middlewares"
 	"alterra/deliveries/validation"
 	"alterra/entities"
 	"alterra/entities/web"
@@ -25,12 +24,12 @@ func NewUserService(repository userRepository.UserRepositoryInterface) *UserServ
 	}
 }
 
-func (service UserService) CreateUser(userRequest entities.CreateUserRequest) (entities.UserAuthResponse, error) {
+func (service UserService) CreateUser(userRequest entities.CreateUserRequest) (entities.UserResponse, error) {
 
 	// Validation
 	err := validation.ValidateCreateUserRequest(service.validate, userRequest)
 	if err != nil {
-		return entities.UserAuthResponse{}, err
+		return entities.UserResponse{}, err
 	}
 
 	// Konversi user request menjadi domain untuk diteruskan ke repository
@@ -40,7 +39,7 @@ func (service UserService) CreateUser(userRequest entities.CreateUserRequest) (e
 	// Konversi datetime untuk field datetime (dob)
 	dob, err := time.Parse("2006-01-02", userRequest.DOB)
 	if err != nil {
-		return entities.UserAuthResponse{}, web.WebError{Code: 400, Message: "date of birth format is invalid"}
+		return entities.UserResponse{}, web.WebError{Code: 400, Message: "date of birth format is invalid"}
 	}
 	user.DOB = dob
 
@@ -51,25 +50,14 @@ func (service UserService) CreateUser(userRequest entities.CreateUserRequest) (e
 	// Insert ke sistem melewati repository
 	user, err = service.userRepo.Store(user)
 	if err != nil {
-		return entities.UserAuthResponse{}, err
+		return entities.UserResponse{}, err
 	}
 
 	// Konversi hasil repository menjadi user response
 	userRes := entities.UserResponse{}
 	copier.Copy(&userRes, &user)
 
-	// generate token
-	token, err := middlewares.CreateToken(int(user.ID), user.Name, user.Role)
-	if err != nil {
-		return entities.UserAuthResponse{}, err
-	}
-
-	// Buat auth response untuk dimasukkan token dan user
-	authRes := entities.UserAuthResponse{
-		Token: token,
-		User:  userRes,
-	}
-	return authRes, nil
+	return userRes, nil
 }
 
 /*
