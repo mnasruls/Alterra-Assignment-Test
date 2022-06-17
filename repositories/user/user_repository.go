@@ -138,6 +138,12 @@ func (repo UserRepository) Delete(id int) error {
 	return nil
 }
 
+/*
+ * Count All User
+ * -------------------------------
+ * Mengitung User berdasarkan filter
+ */
+
 func (repo UserRepository) CountAllUser(filters []map[string]string) (int64, error) {
 	var count int64
 	builder := repo.db.Model(&entities.User{})
