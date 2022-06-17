@@ -22,6 +22,8 @@ func main() {
 	// User
 	userRepository := _userRepository.NewUserRepository(db)
 	userService := _userService.NewUserService(userRepository)
+	userHandler := handlers.NewUserHandler(userService)
+	routes.RegisterUserRoute(e, userHandler)
 
 	//admin
 	adminHandler := handlers.NewAdminHandler(userService)
