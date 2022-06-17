@@ -13,3 +13,8 @@ func RegisterAdminRoute(e *echo.Echo, userHandler *handlers.AdminHandler) {
 	group.PUT("/:id", userHandler.Update)    //Edit
 	group.DELETE("/:id", userHandler.Delete) //Delete
 }
+
+func RegisterAuthRoute(e *echo.Echo, authHandler *handlers.AuthHandler) {
+	e.POST("api/auth", authHandler.Login)                             // Login
+	e.GET("api/auth/me", authHandler.Me, middlewares.JWTMiddleware()) //Mendapatkan data profile
+}

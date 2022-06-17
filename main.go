@@ -4,8 +4,9 @@ import (
 	"alterra/configs"
 	"alterra/deliveries/handlers"
 	"alterra/deliveries/routes"
-	userRepository "alterra/repositories/user"
-	userService "alterra/services/user"
+	_userRepository "alterra/repositories/user"
+	_authService "alterra/services/auth"
+	_userService "alterra/services/user"
 	"alterra/utils"
 
 	"github.com/labstack/echo/v4"
@@ -19,9 +20,17 @@ func main() {
 	e := echo.New()
 
 	// User
-	userRepository := userRepository.NewUserRepository(db)
-	userService := userService.NewUserService(userRepository)
+	userRepository := _userRepository.NewUserRepository(db)
+	userService := _userService.NewUserService(userRepository)
+
+	//admin
 	adminHandler := handlers.NewAdminHandler(userService)
 	routes.RegisterAdminRoute(e, adminHandler)
+
+	//Authentication
+	authService := _authService.NewAuthService(userRepository)
+	authHancdler := handlers.NewAuthHandler(authService)
+	routes.RegisterAuthRoute(e, authHancdler)
+
 	e.Logger.Fatal(e.Start(":" + config.App.Port))
 }
