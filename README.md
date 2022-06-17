@@ -3,6 +3,7 @@
 Simple API project using echo framework
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/76ac347865d54ef7a929f9b17e98a34d)](https://www.codacy.com/gh/mnasruls/Alterra-Assignment-Test/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mnasruls/Alterra-Assignment-Test&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/76ac347865d54ef7a929f9b17e98a34d)](https://www.codacy.com/gh/mnasruls/Alterra-Assignment-Test/dashboard?utm_source=github.com&utm_medium=referral&utm_content=mnasruls/Alterra-Assignment-Test&utm_campaign=Badge_Coverage)
 
 
 ## About The Project
@@ -39,6 +40,7 @@ Berikut fitur yang terdapat dalam Bringeee :
 
 ## Link Documentation (Open API)
 https://app.swaggerhub.com/apis-docs/nasrulmuhammad63/user-management/v1.0.0
+
 <img src="images/swagger.png">
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -60,3 +62,15 @@ Jalankan aplikasi
 ```bash
   $ go run .
 ```
+
+## How To Test
+
+Jalankan di terminal dengan perintah
+
+```bash
+ ./test.sh
+```
+Hasil testing
+
+<img src="images/test.png">
+<p align="right">(<a href="#top">back to top</a>)</p>
