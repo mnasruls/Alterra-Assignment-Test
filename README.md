@@ -63,7 +63,17 @@ Jalankan aplikasi
   $ go run .
 ```
 
-## How To Test
+Pertama - tama buatlah sebuah akun admin terlebih dahulu secara manual di database. Sebagai contoh:
+- name = admin
+- email = admin@gmail.com
+- password = $2a$04$4DN4YtzdEpuWEX83brLiju39dXHnEnWUmafYvnBoMrTJwOQuOFrbu 👈🏻 (Input ke database) -- masukkan 123 untuk login
+- dob = 2000-08-07 07:00:00.000
+- gender = laki - laki
+- address = Jl. jend. sudirman
+- phone number = 081222333444
+- role = admin
+
+## How To Run Unit Test
 
 Jalankan di terminal dengan perintah
 
