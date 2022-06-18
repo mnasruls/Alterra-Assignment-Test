@@ -73,6 +73,8 @@ Pertama - tama buatlah sebuah akun admin terlebih dahulu secara manual di databa
 - phone number = 081222333444
 - role = admin
 
+Setelah membuat akun admin secara manual, silahkan mencoba fitur - fitur lainnya.
+
 ## How To Run Unit Test
 
 Jalankan di terminal dengan perintah
