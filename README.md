@@ -53,7 +53,7 @@ Kloning project
 atau
 ```bash
  git@github.com:mnasruls/Alterra-Assignment-Test.git
-``
+```
 Masuk ke direktori project
 
 ```bash
