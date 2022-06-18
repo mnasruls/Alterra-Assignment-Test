@@ -50,6 +50,10 @@ Kloning project
 ```bash
   https://github.com/mnasruls/Alterra-Assignment-Test.git
 ```
+atau
+```bash
+ git@github.com:mnasruls/Alterra-Assignment-Test.git
+``
 Masuk ke direktori project
 
 ```bash
