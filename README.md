@@ -21,7 +21,7 @@ Berikut fitur yang terdapat dalam Bringeee :
     - Get profile user lain
     - Get all user
 - Fitur User
-    - login
+    - Login
     - Get profile
     - Get profile user lain
     - Get all user
